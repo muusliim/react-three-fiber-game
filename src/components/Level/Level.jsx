@@ -8,6 +8,7 @@ import {
 	BlockVerticalLift,
 } from "../Level/levelBlocks";
 import Bounds from "../Level/levelComponents/Bounds";
+import { Sky } from "@react-three/drei";
 
 export default function Level({
 	count = 5,
@@ -24,6 +25,13 @@ export default function Level({
 
 	return (
 		<>
+			<Sky
+				distance={5000}
+				sunPosition={[0, 1, 0]}
+				inclination={2}
+				azimuth={0.7}
+			/>
+
 			<BlockStart position={[0, 0, 0]} />
 			{blocks.map((Block, index) => (
 				<Block

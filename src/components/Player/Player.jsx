@@ -2,18 +2,33 @@ import { RigidBody, useRapier } from "@react-three/rapier";
 import { useFrame } from "@react-three/fiber";
 import { useKeyboardControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
 import * as THREE from "three";
+
+import useStore from "../../store/store.js";
 export default function Player() {
+	const { blocksCount, phase, start, restart, end } = useStore(
+		useShallow((state) => ({
+			blocksCount: state.blocksCount,
+			phase: state.phase,
+			start: state.start,
+			restart: state.restart,
+			end: state.end,
+		}))
+	);
 	const [subscribeKeys, getKeys] = useKeyboardControls();
 	const body = useRef();
 	const { rapier, world } = useRapier();
 
-	const [smoothedCameraPosition] = useState(() => new THREE.Vector3(10, 10, 10));
+	//CAMERA POSITION
+	const [smoothedCameraPosition] = useState(
+		() => new THREE.Vector3(10, 10, 10)
+	);
 	const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
 	//CONTROLS
 	const jump = () => {
-		const origin = body.current.translation();
+		const origin = body.current?.translation();
 		origin.y -= 0.31;
 		const direction = { x: 0, y: -1, z: 0 };
 		const ray = new rapier.Ray(origin, direction);
@@ -23,21 +38,54 @@ export default function Player() {
 			body.current?.applyImpulse({ x: 0, y: 0.5, z: 0 });
 	};
 
+	//RESET LEVEL
+	const reset = () => {
+		body.current.setTranslation({ x: 0, y: 1, z: 0 });
+		body.current.setLinvel({ x: 0, y: 0, z: 0 });
+		body.current.setAngvel({ x: 0, y: 0, z: 0 });
+	};
+
 	useEffect(() => {
-		const unsub = subscribeKeys(
+		switch (phase) {
+			case "ready":
+				reset();
+				break;
+			default:
+				break;
+		}
+		const unsubStore = useStore.subscribe(
+			(state) => state.phase,
+			(phase) => {
+				switch (phase) {
+					case "ready":
+						reset();
+						break;
+					default:
+						break;
+				}
+			}
+		);
+		const unsubJump = subscribeKeys(
 			(state) => state.jump,
 			(value) => {
 				value && jump();
 			}
 		);
 
-		return () => {
-			unsub();
-		};
-	}, [subscribeKeys]);
+		const unsubscribetoAnyKey = subscribeKeys(() => {
+			start();
+		});
 
+		return () => {
+			unsubJump();
+			unsubscribetoAnyKey();
+			unsubStore();
+		};
+	}, []);
+
+	//PLAYER MOVEMENT
 	useFrame((state, delta) => {
-		const { forward, backward, left, right } = getKeys();
+		const { forward, backward, left, right, restart } = getKeys();
 		const impulse = { x: 0, y: 0, z: 0 };
 		const torque = { x: 0, y: 0, z: 0 };
 
@@ -61,6 +109,8 @@ export default function Player() {
 				impulse.x += torqueStrength;
 				torque.z -= torqueStrength;
 				break;
+			case restart:
+				reset();
 			default:
 				break;
 		}
@@ -69,10 +119,9 @@ export default function Player() {
 		body.current?.applyTorqueImpulse(torque);
 
 		/*
-		 CAMERA
+		 CAMERA POSITION TO PLAYER
 		 */
-
-		const bodyPosition = body.current.translation();
+		const bodyPosition = body.current?.translation();
 		const cameraPosition = new THREE.Vector3();
 		cameraPosition.copy(bodyPosition);
 		cameraPosition.z += 2.25;
@@ -86,6 +135,15 @@ export default function Player() {
 
 		state.camera.position.copy(smoothedCameraPosition);
 		state.camera.lookAt(smoothedCameraTarget);
+
+		/* PHASES */
+		if (bodyPosition.z < -(blocksCount * 4 + 2)) {
+			end();
+		}
+
+		if (bodyPosition.y < -4) {
+			reset();
+		}
 	});
 
 	return (

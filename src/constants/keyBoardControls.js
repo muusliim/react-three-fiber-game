@@ -19,4 +19,8 @@ export const keyBoardControls = [
 		name: "jump",
 		keys: ["Space"],
 	},
+	{
+		name: 'restart',
+		keys: ['KeyR']
+	}
 ];

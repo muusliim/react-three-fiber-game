@@ -1,0 +1,74 @@
+.interface {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    font-family: 'Bebas Neue', cursive;
+}
+
+.time {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: 100%;
+    color: white;
+    transform: translate(-50%, -50%);
+    font-size: 6vh;
+    background-color: #18180939;
+    padding: 10px;
+    text-align: center;
+}
+
+.restart {
+    display: inline-block;
+    text-align: center;
+    font-family: 'Bebas Neue', cursive;
+    position: absolute;
+    top: 40%;
+    left: 0;
+    width: 100%;
+    color: #ffffff;
+    font-size: 80px;
+    background: #0000033d;
+    text-transform: uppercase;
+    padding-top: 10px;
+    pointer-events: auto;
+    cursor: pointer;
+
+    &::first-letter {
+        color: #f42e0b;
+    }
+}
+
+
+
+
+.controls {
+    position: absolute;
+    bottom: 10%;
+    left: 0;
+    width: 100%;
+}
+
+.controls .raw {
+    display: flex;
+    justify-content: center;
+}
+
+.controls .key {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    border: 2px solid #ffffff;
+    background: #ffffff44;
+}
+
+.controls .key.large {
+    width: 144px;
+}
+
+.controls .key.active {
+    background: #e8d52599;
+}

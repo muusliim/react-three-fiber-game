@@ -2,6 +2,7 @@ import { useGLTF } from "@react-three/drei";
 import { boxGeometry } from "../geometries/Geometry";
 import { floorMaterial } from "../materials/Materials";
 import { RigidBody } from "@react-three/rapier";
+import { useFrame } from "@react-three/fiber";
 
 export function BlockEnd({ position = [0, 0, 0] }) {
 	const reward = useGLTF("./reward.glb");
@@ -9,6 +10,11 @@ export function BlockEnd({ position = [0, 0, 0] }) {
 		if (child.isMesh) {
 			child.castShadow = true;
 		}
+	});
+
+	useFrame((state) => {
+		const time = state.clock.getElapsedTime();
+		reward.scene.rotation.y = time * 0.5;
 	});
 
 	return (
