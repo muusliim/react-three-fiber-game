@@ -8,11 +8,12 @@ import {
 	BlockVerticalLift,
 } from "../Level/levelBlocks";
 import Bounds from "../Level/levelComponents/Bounds";
-import { Sky } from "@react-three/drei";
+import { Sky} from "@react-three/drei";
 
 export default function Level({
 	count = 5,
 	types = [BlockSpinner, BlockVerticalLift, BlockHorizontalLift],
+	randomizer = 0,
 }) {
 	const blocks = useMemo(() => {
 		const blocks = [];
@@ -21,7 +22,7 @@ export default function Level({
 			blocks.push(type);
 		}
 		return blocks;
-	}, [count, types]);
+	}, [count, types, randomizer]);
 
 	return (
 		<>

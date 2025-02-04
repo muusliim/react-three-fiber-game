@@ -20,7 +20,7 @@ export const keyBoardControls = [
 		keys: ["Space"],
 	},
 	{
-		name: 'restart',
+		name: 'restartGame',
 		keys: ['KeyR']
 	}
 ];

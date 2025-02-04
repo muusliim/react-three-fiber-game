@@ -1,4 +1,4 @@
-import { useGLTF } from "@react-three/drei";
+import { Text, useGLTF } from "@react-three/drei";
 import { boxGeometry } from "../geometries/Geometry";
 import { floorMaterial } from "../materials/Materials";
 import { RigidBody } from "@react-three/rapier";
@@ -20,6 +20,10 @@ export function BlockEnd({ position = [0, 0, 0] }) {
 	return (
 		/* sTART POSITION Floor */
 		<group position={position}>
+			<Text position={[0.0, 1.85, 2]} color="#4e4ebc" scale={1} font="./fonts/bebas-neue.woff">
+				FINISH
+				<meshBasicMaterial toneMapped={false} />
+			</Text>
 			<mesh
 				geometry={boxGeometry}
 				material={floorMaterial}

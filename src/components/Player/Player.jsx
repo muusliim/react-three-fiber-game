@@ -26,7 +26,7 @@ export default function Player() {
 	);
 	const [smoothedCameraTarget] = useState(() => new THREE.Vector3());
 
-	//CONTROLS
+	//CONTROLS jump
 	const jump = () => {
 		const origin = body.current?.translation();
 		origin.y -= 0.31;
@@ -46,13 +46,6 @@ export default function Player() {
 	};
 
 	useEffect(() => {
-		switch (phase) {
-			case "ready":
-				reset();
-				break;
-			default:
-				break;
-		}
 		const unsubStore = useStore.subscribe(
 			(state) => state.phase,
 			(phase) => {
@@ -72,9 +65,12 @@ export default function Player() {
 			}
 		);
 
-		const unsubscribetoAnyKey = subscribeKeys(() => {
-			start();
-		});
+		const unsubscribetoAnyKey = subscribeKeys(
+			(state) => state.forward || state.backward || state.left || state.right,
+			(value) => {
+				value && start();
+			}
+		);
 
 		return () => {
 			unsubJump();
@@ -85,7 +81,7 @@ export default function Player() {
 
 	//PLAYER MOVEMENT
 	useFrame((state, delta) => {
-		const { forward, backward, left, right, restart } = getKeys();
+		const { forward, backward, left, right, restartGame } = getKeys();
 		const impulse = { x: 0, y: 0, z: 0 };
 		const torque = { x: 0, y: 0, z: 0 };
 
@@ -109,8 +105,8 @@ export default function Player() {
 				impulse.x += torqueStrength;
 				torque.z -= torqueStrength;
 				break;
-			case restart:
-				reset();
+			case restartGame:
+				restart();
 			default:
 				break;
 		}
