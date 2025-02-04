@@ -2,4 +2,4 @@
 2) npm run dev
 
 for movement use arrow keys or wasd + spacebar
-restart level - R 
+(restart level - R )
